@@ -26,10 +26,14 @@ mongoose
   });
 
 
-// Status route
+app.use('/api/auth', require('./routes/auth'));
+
+app.get('/', (req, res) => res.send('Blogging API running 🚀'));
+
+/*// Status route
 app.get('/api/status', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date() });
-});
+}); */
 
 // Start server
 const PORT = process.env.PORT || 5000;
