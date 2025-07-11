@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const postRoutes = require('./routes/post');
 
 const app = express();
 
@@ -29,6 +30,10 @@ mongoose
 app.use('/api/auth', require('./routes/auth'));
 
 app.get('/', (req, res) => res.send('Blogging API running 🚀'));
+
+
+app.use('/api/posts', postRoutes);
+
 
 /*// Status route
 app.get('/api/status', (req, res) => {
