@@ -5,7 +5,7 @@ import API from '../api/axios';
 export default function EditPost() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ title: '', content: '' });
+  const [form, setForm] = useState({ title: '', content: '', tags: '' });
 
   useEffect(() => {
     API.get(`/posts/${id}`)
@@ -13,21 +13,27 @@ export default function EditPost() {
         setForm({
           title: res.data.post.title,
           content: res.data.post.content,
+          tags: res.data.post.tags.join(', '),
         });
       })
       .catch(() => alert('Failed to load post'));
   }, [id]);
 
   const handleUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      await API.put(`/posts/${id}`, form);
-      alert('Post updated!');
-      navigate(`/posts/${id}`);
-    } catch (err) {
-      alert('Update failed');
-    }
-  };
+  e.preventDefault();
+  try {
+    const updatedForm = {
+      ...form,
+      tags: form.tags.split(',').map(tag => tag.trim()),
+    };
+
+    await API.put(`/posts/${id}`, updatedForm);
+    alert('Post updated!');
+    navigate(`/posts/${id}`);
+  } catch (err) {
+    alert('Update failed');
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4">
@@ -44,6 +50,17 @@ export default function EditPost() {
               placeholder="Enter title"
               className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Tag</label>
+            <input
+              value={form.tags}
+              onChange={e => setForm({ ...form, tags: e.target.value })}
+              placeholder="Tags (comma-separated, e.g. political,productivity,node)"
+              className="w-full p-2 border border-gray-300 rounded mb-4"
+            
             />
           </div>
 

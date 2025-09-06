@@ -8,6 +8,8 @@ import EditPost from './posts/EditPost';
 import MyPosts from './posts/MyPosts';
 import ProtectedRoute from './components/ProtectedRoutes';
 import Navbar from './components/Navbar';
+import UserProfile from "./posts/UserProfile";
+import NotFound from "./posts/NotFound";
 
 
 function App() {
@@ -31,6 +33,8 @@ function App() {
         path="/myposts"
        element={<ProtectedRoute><MyPosts /></ProtectedRoute>}
       />
+      <Route path="/user/:id" element={<UserProfile />} />
+      <Route path="*" element={<NotFound />} />
       </Routes>
       </div>
       </div>

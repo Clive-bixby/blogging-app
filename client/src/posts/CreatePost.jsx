@@ -5,12 +5,14 @@ import API from '../api/axios';
 export default function CreatePost() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [tagInput, setTagInput] = useState('');
   const navigate = useNavigate();
 
   const handleCreate = async (e) => {
     e.preventDefault();
+    const tags = tagInput.split(',').map(tag => tag.trim());
     try {
-      await API.post('/posts', { title, content });
+      await API.post('/posts', { title, content, tags });
       alert('Post created!');
       navigate('/');
     } catch (err) {
@@ -33,6 +35,16 @@ export default function CreatePost() {
               placeholder="Enter post title"
               className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Tag</label>
+            <input
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              placeholder="Tags (comma-separated, e.g. political,productivity,node)"
+              className="w-full p-2 border border-gray-300 rounded mb-4"
             />
           </div>
 

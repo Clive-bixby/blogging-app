@@ -4,14 +4,15 @@ const mongoose = require('mongoose');
 // Create post
 exports.createPost = async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, tags } = req.body;
     const authorId = req.user.userId;
 
     if (!title || !content) {
       return res.status(400).json({ message: 'Title and content are required.' });
     }
 
-    const newPost = new Post({ title, content, author: authorId });
+
+    const newPost = new Post({ title, content, tags, author: authorId });
     await newPost.save();
 
     res.status(201).json({ message: 'Post created successfully', post: newPost });
@@ -30,12 +31,24 @@ exports.listPosts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const query = {};
+
+  
     if (req.query.author && mongoose.Types.ObjectId.isValid(req.query.author)) {
       query.author = req.query.author;
     }
 
+    
+    if (req.query.search) {
+      const searchRegex = new RegExp(req.query.search, "i");
+      query.$or = [
+        { title: searchRegex },
+        { content: searchRegex },
+        { tags: searchRegex },
+      ];
+    }
+
     const posts = await Post.find(query)
-      .populate('author', 'username email')
+      .populate("author", "username email")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -50,8 +63,8 @@ exports.listPosts = async (req, res) => {
       totalPosts,
     });
   } catch (error) {
-    console.error('Error listing posts:', error);
-    res.status(500).json({ message: 'Failed to retrieve posts.' });
+    console.error("Error listing posts:", error);
+    res.status(500).json({ message: "Failed to retrieve posts." });
   }
 };
 
@@ -80,10 +93,11 @@ exports.getPostDetail = async (req, res) => {
 // Update
 exports.updatePost = async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, tags } = req.body;
 
     req.post.title = title || req.post.title;
     req.post.content = content || req.post.content;
+    req.post.tags = tags || req.post.tags;
 
     await req.post.save();
 
@@ -102,5 +116,31 @@ exports.deletePost = async (req, res) => {
   } catch (error) {
     console.error('Error deleting post:', error);
     res.status(500).json({ message: 'Failed to delete post.' });
+  }
+};
+
+// like post
+
+exports.toggleLike = async (req, res) => {
+  try {
+    console.log('User ID in controller:', req.user.userId);
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+
+    const userId = req.user.userId;
+    const hasLiked = post.likes.includes(userId);
+
+    if (hasLiked) {
+      
+      post.likes = post.likes.filter(id => id.toString() !== userId);
+    } else {
+      
+      post.likes.push(userId);
+    }
+
+    await post.save();
+    res.json({ likes: post.likes.length, likedByUser: !hasLiked });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

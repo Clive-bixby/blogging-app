@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-
+const { toggleLike } = require('../controllers/postController');
 const postController = require('../controllers/postController');
 console.log('Value of postController:', postController);
 console.log('Type of postController.listPosts:', typeof postController.listPosts);
 const authenticate = require('../middleware/auth');
 const verifyPostOwnership = require('../middleware/postOwnership');
 
+router.post('/:id/like', authenticate, toggleLike);
 //Public Routes
 router.get('/', postController.listPosts);           
 router.get('/:id', postController.getPostDetail);    
