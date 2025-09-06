@@ -6,14 +6,15 @@ export default function CreatePost() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tagInput, setTagInput] = useState('');
+  const [status, setStatus] = useState("draft");
   const navigate = useNavigate();
 
   const handleCreate = async (e) => {
     e.preventDefault();
     const tags = tagInput.split(',').map(tag => tag.trim());
     try {
-      await API.post('/posts', { title, content, tags });
-      alert('Post created!');
+      await API.post('/posts', { title, content, tags, status });
+      alert(status === "draft" ? "Post saved as draft!" : "Post published!");
       navigate('/');
     } catch (err) {
       alert('Failed to create post');
@@ -60,11 +61,23 @@ export default function CreatePost() {
             />
           </div>
 
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Status</label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="draft">📝 Save as Draft</option>
+              <option value="published">✅ Publish Now</option>
+            </select>
+          </div>
+
           <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-200"
           >
-            🚀 Publish Post
+            {status === "draft" ? "💾 Save Draft" : "🚀 Publish Post"}
           </button>
         </form>
       </div>

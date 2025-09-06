@@ -25,6 +25,11 @@ const postSchema = new mongoose.Schema({
     required: true,
   },
   likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  status: {
+    type: String,
+    enum: ["draft", "published"],
+    default: "draft",   // new posts start as draft
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Post', postSchema);

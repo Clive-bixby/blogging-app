@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 // Create post
 exports.createPost = async (req, res) => {
   try {
-    const { title, content, tags } = req.body;
+    const { title, content, tags, status } = req.body;
     const authorId = req.user.userId;
 
     if (!title || !content) {
@@ -12,7 +12,7 @@ exports.createPost = async (req, res) => {
     }
 
 
-    const newPost = new Post({ title, content, tags, author: authorId });
+    const newPost = new Post({ title, content, tags, author: authorId, status: status, });
     await newPost.save();
 
     res.status(201).json({ message: 'Post created successfully', post: newPost });
@@ -30,7 +30,12 @@ exports.listPosts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const query = {};
+    const query = { status: "published" };
+
+    if (req.query.status && req.query.author === req.user?.id) {
+      query.status = req.query.status;
+    }
+
 
   
     if (req.query.author && mongoose.Types.ObjectId.isValid(req.query.author)) {

@@ -28,6 +28,12 @@ export default function Navbar() {
               <Link to="/myposts" className="text-gray-600 hover:text-blue-600 font-medium">
                 My Posts
               </Link>
+              <Link
+                to="/drafts"
+                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"
+              >
+                Drafts
+              </Link>
             </>
           )}
         </div>

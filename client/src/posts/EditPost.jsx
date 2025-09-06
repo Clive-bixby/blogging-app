@@ -5,7 +5,7 @@ import API from '../api/axios';
 export default function EditPost() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ title: '', content: '', tags: '' });
+  const [form, setForm] = useState({ title: '', content: '', tags: '', status: 'draft' });
 
   useEffect(() => {
     API.get(`/posts/${id}`)
@@ -14,6 +14,7 @@ export default function EditPost() {
           title: res.data.post.title,
           content: res.data.post.content,
           tags: res.data.post.tags.join(', '),
+          status: res.data.post.status,
         });
       })
       .catch(() => alert('Failed to load post'));
@@ -28,7 +29,7 @@ export default function EditPost() {
     };
 
     await API.put(`/posts/${id}`, updatedForm);
-    alert('Post updated!');
+    alert(`Post ${form.status === "draft" ? "saved as draft" : "published"}!`);
     navigate(`/posts/${id}`);
   } catch (err) {
     alert('Update failed');
@@ -74,6 +75,18 @@ export default function EditPost() {
               className="w-full px-4 py-2 border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Status</label>
+            <select
+              value={form.status}
+              onChange={(e) => setForm({ ...form, status: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="draft">📝 Save as Draft</option>
+              <option value="published">✅ Publish</option>
+            </select>
           </div>
 
           <button

@@ -6,6 +6,7 @@ import CreatePost from './posts/CreatePost';
 import PostDetail from './posts/PostDetail';
 import EditPost from './posts/EditPost';
 import MyPosts from './posts/MyPosts';
+import Drafts from './posts/Drafts';
 import ProtectedRoute from './components/ProtectedRoutes';
 import Navbar from './components/Navbar';
 import UserProfile from "./posts/UserProfile";
@@ -33,6 +34,7 @@ function App() {
         path="/myposts"
        element={<ProtectedRoute><MyPosts /></ProtectedRoute>}
       />
+      <Route path="/drafts" element={<Drafts />} />
       <Route path="/user/:id" element={<UserProfile />} />
       <Route path="*" element={<NotFound />} />
       </Routes>
