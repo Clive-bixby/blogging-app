@@ -18,7 +18,7 @@ export default function Navbar() {
         {/* Left side */}
         <div className="flex items-center space-x-6">
           <Link to="/" className="text-xl font-bold text-gray-800 hover:text-blue-600">
-            MegaBlog
+            NarrativeNode 
           </Link>
           {isLoggedIn && (
             <>
